@@ -25,7 +25,7 @@ spec:
   - name: image-tag
     default: ""
   - name: BUILDER_IMAGE
-    default: quay.io/buildah/stable:v1.15.0
+    default: quay.io/buildah/stable:v1.21.4
   - name: DOCKERFILE
     default: ./Dockerfile
   - name: CONTEXT
@@ -40,6 +40,8 @@ spec:
   - name: app-name
     default: ""
   - name: ace-project
+    default: ""
+  - name: BUILD_EXTRA_ARGS
     default: ""
   volumes:
   - name: varlibcontainers
@@ -127,7 +129,7 @@ spec:
     script: |
       APP_IMAGE="$(params.image-server)/$(params.image-namespace)/$(params.image-repository):$(params.image-tag)"
       buildah login -u ${IBM_ENTITLED_REGISTRY_USER} -p ${IBM_ENTITLED_REGISTRY_PASSWORD} cp.icr.io
-      buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) -f $(params.DOCKERFILE) -t ${APP_IMAGE} $(params.CONTEXT)
+      buildah --layers --storage-driver=$(params.STORAGE_DRIVER) bud ${BUILD_EXTRA_ARGS} --format=$(params.FORMAT) --tls-verify=$(params.TLSVERIFY) -f $(params.DOCKERFILE) -t ${APP_IMAGE} $(params.CONTEXT)
       set +x
       if [[ -n "${REGISTRY_USER}" ]] && [[ -n "${REGISTRY_PASSWORD}" ]] && [[ "$(params.image-server)" != "image-registry.openshift-image-registry.svc:5000"  ]]; then
         buildah login -u "${REGISTRY_USER}" -p "${REGISTRY_PASSWORD}" "$(params.image-server)"

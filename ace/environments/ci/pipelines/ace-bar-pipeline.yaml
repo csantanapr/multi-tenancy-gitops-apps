@@ -6,9 +6,16 @@ metadata:
 spec:
   params:
 
+  - name: ace-base-image
+    type: string
+    default: cp.icr.io/cp/appc/ace-server-prod:12.0.1.0-r3-20210722-112920
+
   - name: is-source-repo-url
     type: string
     default: https://github.com/cloud-native-toolkit-demos/ace-customer-details.git
+  - default: ""
+    name: is-source-revision
+    type: string
   - default: is-source
     name: is-source-directory
     type: string
@@ -49,6 +56,8 @@ spec:
     params:
     - name: url
       value: $(params.is-source-repo-url)
+    - name: revision
+      value: $(params.is-source-revision)
     - name: subdirectory
       value: $(params.is-source-directory)
     - name: deleteExisting
@@ -97,6 +106,8 @@ spec:
 
   - name: build-is-image
     params:
+    - name: BUILD_EXTRA_ARGS
+      value: --build-arg BASE=$(params.ace-base-image)
     - name: TLSVERIFY
       value: "false"
     - name: IMAGE
